@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Bluesky Notifications",
+  "version": "1.0",
+  "description": "Display unread notifications count for Bluesky",
+  "permissions": [
+    "webRequest",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://bsky.app/*",
+    "*://*.bsky.network/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://bsky.app/*", "*://*.bsky.network/*"],
+      "js": ["content.js"]
+    }
+  ]
+} 
