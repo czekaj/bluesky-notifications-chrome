@@ -41,7 +41,10 @@
   </style>
 </head>
 <body>
-  <div>Unread notifications: <span id="count">-</span></div>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <div>Unread notifications: <span id="count">-</span></div>
+    <button id="markAsRead" style="padding: 5px 10px; cursor: pointer;">Mark as Read</button>
+  </div>
   <div id="notifications"></div>
   <script src="popup.js"></script>
 </body>

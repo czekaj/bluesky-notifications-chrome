@@ -61,4 +61,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     displayNotifications();
   }
 });
+
+// Add this new function
+function markNotificationsAsSeen() {
+  chrome.storage.local.get(['bearerToken'], function(result) {
+    if (!result.bearerToken) return;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://shimeji.us-east.host.bsky.network/xrpc/app.bsky.notification.updateSeen', true);
+    xhr.setRequestHeader('Authorization', result.bearerToken);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        // Update UI
+        document.getElementById('count').textContent = '0';
+        document.getElementById('notifications').innerHTML = '';
+        
+        // Update storage and badge
+        chrome.storage.local.set({ unreadCount: 0, unreadNotifications: [] });
+        chrome.runtime.sendMessage({ type: 'UNREAD_COUNT', count: 0 });
+      }
+    };
+    
+    xhr.send(JSON.stringify({
+      seenAt: new Date().toISOString()
+    }));
+  });
+}
+
+// Add click handler for the mark as read button
+document.getElementById('markAsRead').addEventListener('click', markNotificationsAsSeen);
   
