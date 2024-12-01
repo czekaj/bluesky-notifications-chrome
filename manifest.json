@@ -3,6 +3,11 @@
   "name": "Bluesky Notifications",
   "version": "1.0",
   "description": "Display unread notifications count for Bluesky",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": [
     "webRequest",
     "tabs",
