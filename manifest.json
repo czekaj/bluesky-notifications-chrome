@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Unread Notifications for Bluesky",
-  "version": "1.0",
-  "description": "Display unread notifications count for Bluesky",
+  "version": "0.0.1",
+  "description": "Display unread notification badges for Bluesky",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
