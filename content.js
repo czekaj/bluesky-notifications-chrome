@@ -1,11 +1,21 @@
 let bearerToken = null;
 
-// Listen for bearer token from background script
+// Initialize by checking storage
+chrome.storage.local.get(['bearerToken'], function(result) {
+  if (result.bearerToken) {
+    bearerToken = result.bearerToken;
+    checkNotifications(); // Check immediately if we have a token
+  }
+});
+
+// Continue listening for updates
 chrome.runtime.onMessage.addListener((message) => {
-  console.log('Received message:', message);  // Debug log
   if (message.type === 'BEARER_TOKEN') {
-    console.log('Setting bearer token');  // Debug log
+    const hadNoToken = !bearerToken; // Check if this is the first time we're getting a token
     bearerToken = message.token;
+    if (hadNoToken) {
+      checkNotifications(); // Check immediately if this was our first token
+    }
   }
 });
 
@@ -33,6 +43,6 @@ function checkNotifications() {
   xhr.send();
 }
 
-// Check notifications every minute
-setInterval(checkNotifications, 60000);
+// Check notifications every 30 seconds
+setInterval(checkNotifications, 30000);
 checkNotifications(); // Initial check 

@@ -5,7 +5,8 @@
   "description": "Display unread notifications count for Bluesky",
   "permissions": [
     "webRequest",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "host_permissions": [
     "https://bsky.app/*",

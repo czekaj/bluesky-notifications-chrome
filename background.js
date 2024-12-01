@@ -3,17 +3,19 @@ let bearerToken = null;
 // Capture bearer token from requests
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-    console.log('Intercepted request:', details.url);  // Debug log
     const authHeader = details.requestHeaders.find(header => header.name.toLowerCase() === 'authorization');
     if (authHeader) {
-      console.log('Found bearer token');  // Debug log
-      bearerToken = authHeader.value;
-      // Broadcast token to content script
-      chrome.tabs.query({}, function(tabs) {
-        console.log('Broadcasting to', tabs.length, 'tabs');  // Debug log
-        tabs.forEach(tab => {
-          chrome.tabs.sendMessage(tab.id, { type: 'BEARER_TOKEN', token: bearerToken });
-        });
+      const newToken = authHeader.value;
+      // Check if token is different from stored one
+      chrome.storage.local.get(['bearerToken'], function(result) {
+        if (result.bearerToken !== newToken) {
+          chrome.storage.local.set({ bearerToken: newToken });
+          chrome.tabs.query({}, function(tabs) {
+            tabs.forEach(tab => {
+              chrome.tabs.sendMessage(tab.id, { type: 'BEARER_TOKEN', token: newToken });
+            });
+          });
+        }
       });
     }
   },
