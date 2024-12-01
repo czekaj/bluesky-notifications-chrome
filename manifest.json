@@ -28,5 +28,6 @@
       "matches": ["https://bsky.app/*", "*://*.bsky.network/*"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "options_page": "options.html"
 } 

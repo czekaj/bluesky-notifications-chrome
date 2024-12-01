@@ -1,10 +1,14 @@
 let bearerToken = null;
 
 // Initialize by checking storage
-chrome.storage.local.get(['bearerToken'], function(result) {
+chrome.storage.local.get(['bearerToken', 'enableFaviconBadges'], function(result) {
   if (result.bearerToken) {
     bearerToken = result.bearerToken;
     checkNotifications(); // Check immediately if we have a token
+  }
+  // Set default value for favicon badges if not set
+  if (result.enableFaviconBadges === undefined) {
+    chrome.storage.local.set({ enableFaviconBadges: true });
   }
 });
 
@@ -49,12 +53,14 @@ function checkNotifications() {
       // Store count in local storage
       chrome.storage.local.set({ unreadCount: count });
 
-      // Update favicon if count exists
-      if (count > 0) {
-        updateFavicon(count);
-      } else {
-        restoreOriginalFavicon();
-      }
+      // Update favicon if count exists and feature is enabled
+      chrome.storage.local.get(['enableFaviconBadges'], function(result) {
+        if (count > 0 && result.enableFaviconBadges) {
+          updateFavicon(count);
+        } else {
+          restoreOriginalFavicon();
+        }
+      });
 
       // Setup click handler if not already set
       setupNotificationClickHandler();
