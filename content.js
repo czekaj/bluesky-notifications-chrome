@@ -89,9 +89,46 @@ function fetchNotificationContent() {
   contentXhr.send();
 }
 
-// Check notifications every 30 seconds
-setInterval(checkNotifications, 30000);
-checkNotifications(); // Initial check 
+// Add broadcast channel listener
+const notificationsBroadcast = new BroadcastChannel('NOTIFS_BROADCAST_CHANNEL');
+notificationsBroadcast.addEventListener('message', (event) => {
+  const count = event.data.event === '30+' 
+    ? 30 
+    : event.data.event === '' 
+      ? 0 
+      : parseInt(event.data.event, 10) || 0;
+
+  // Check current count in storage before updating
+  chrome.storage.local.get(['unreadCount'], function(result) {
+    const currentCount = result.unreadCount || 0;
+    
+    // Only proceed if count has changed
+    if (currentCount !== count) {
+      // Send message to update badge
+      chrome.runtime.sendMessage({
+        type: 'UNREAD_COUNT',
+        count: count
+      });
+
+      // Store new count
+      chrome.storage.local.set({ unreadCount: count });
+
+      // Fetch notification content if we have unread notifications
+      if (count > 0) {
+        fetchNotificationContent();
+      }
+
+      // Update favicon if enabled
+      chrome.storage.local.get(['enableFaviconBadges'], function(result) {
+        if (count > 0 && result.enableFaviconBadges) {
+          updateFavicon(count);
+        } else {
+          restoreOriginalFavicon();
+        }
+      });
+    }
+  });
+});
 
 function updateFavicon(count) {
   const canvas = document.createElement('canvas');
