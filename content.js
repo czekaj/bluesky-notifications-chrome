@@ -46,6 +46,9 @@ function checkNotifications() {
         count: count
       });
 
+      // Store count in local storage
+      chrome.storage.local.set({ unreadCount: count });
+
       // Update favicon if count exists
       if (count > 0) {
         updateFavicon(count);

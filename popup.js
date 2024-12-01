@@ -47,13 +47,18 @@ function displayNotifications() {
   });
 }
 
-// Listen for unread count updates
+// Initial load
+chrome.storage.local.get(['unreadCount'], function(result) {
+  const count = result.unreadCount || 0;
+  document.getElementById('count').textContent = count;
+});
+displayNotifications();
+
+// Update listener to also store count
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'UNREAD_COUNT') {
     document.getElementById('count').textContent = message.count;
     displayNotifications();
   }
 });
-
-// Initial load
-displayNotifications(); 
+  
