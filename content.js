@@ -25,16 +25,21 @@ function checkNotifications() {
     return;
   }
 
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://shimeji.us-east.host.bsky.network/xrpc/app.bsky.notification.getUnreadCount', true);
-  xhr.setRequestHeader('Authorization', bearerToken);
+  // First XHR for unread count
+  const countXhr = new XMLHttpRequest();
+  countXhr.open('GET', 'https://shimeji.us-east.host.bsky.network/xrpc/app.bsky.notification.getUnreadCount', true);
+  countXhr.setRequestHeader('Authorization', bearerToken);
   
-  xhr.onload = function() {
-    console.log(xhr.responseText);
-    if (xhr.status === 200) {
-      const response = JSON.parse(xhr.responseText);
+  countXhr.onload = function() {
+    if (countXhr.status === 200) {
+      const response = JSON.parse(countXhr.responseText);
       const count = response.count;
       
+      // If we have unread notifications, fetch their content
+      if (count > 0) {
+        fetchNotificationContent();
+      }
+
       // Send message to update badge and favicon
       chrome.runtime.sendMessage({
         type: 'UNREAD_COUNT',
@@ -53,7 +58,26 @@ function checkNotifications() {
     }
   };
   
-  xhr.send();
+  countXhr.send();
+}
+
+function fetchNotificationContent() {
+  const contentXhr = new XMLHttpRequest();
+  contentXhr.open('GET', 'https://shimeji.us-east.host.bsky.network/xrpc/app.bsky.notification.listNotifications', true);
+  contentXhr.setRequestHeader('Authorization', bearerToken);
+  
+  contentXhr.onload = function() {
+    if (contentXhr.status === 200) {
+      const response = JSON.parse(contentXhr.responseText);
+      // Filter for unread notifications only
+      const unreadNotifications = response.notifications.filter(n => !n.isRead);
+      
+      // Store in local storage
+      chrome.storage.local.set({ unreadNotifications });
+    }
+  };
+  
+  contentXhr.send();
 }
 
 // Check notifications every 30 seconds

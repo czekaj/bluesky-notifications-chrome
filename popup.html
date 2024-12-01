@@ -3,13 +3,46 @@
 <head>
   <style>
     body {
-      width: 200px;
+      width: 350px;
       padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .notification {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      gap: 10px;
+      align-items: start;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    .content {
+      flex: 1;
+    }
+    .author {
+      font-weight: bold;
+      color: #1d1d1d;
+    }
+    .reason {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .time {
+      color: #888;
+      font-size: 0.8em;
+    }
+    #count {
+      font-weight: bold;
+      color: #FF3E00;
     }
   </style>
 </head>
 <body>
   <div>Unread notifications: <span id="count">-</span></div>
+  <div id="notifications"></div>
   <script src="popup.js"></script>
 </body>
 </html> 
