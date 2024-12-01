@@ -25,7 +25,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'UNREAD_COUNT') {
-    chrome.action.setBadgeBackgroundColor({ color: '#FF3333' });
+    const backgroundColor = message.count > 0 ? '#FF3333' : '#888888';
+    chrome.action.setBadgeBackgroundColor({ color: backgroundColor });
+    chrome.action.setBadgeTextColor({ color: '#FFFFFF' });
     chrome.action.setBadgeText({
       text: message.count.toString()
     });
