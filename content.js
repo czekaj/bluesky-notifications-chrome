@@ -47,6 +47,9 @@ function checkNotifications() {
       } else {
         restoreOriginalFavicon();
       }
+
+      // Setup click handler if not already set
+      setupNotificationClickHandler();
     }
   };
   
@@ -117,4 +120,19 @@ function updateFaviconLink(dataUrl) {
 
   favicon.type = 'image/x-icon';
   favicon.href = dataUrl;
+}
+
+// Add this new function
+function setupNotificationClickHandler() {
+  const notificationLink = document.querySelector('a[aria-label="Notifications"]');
+  if (notificationLink) {
+    notificationLink.addEventListener('click', () => {
+      // Send message to update badge to zero
+      chrome.runtime.sendMessage({
+        type: 'UNREAD_COUNT',
+        count: 0
+      });
+      restoreOriginalFavicon();
+    });
+  }
 }
